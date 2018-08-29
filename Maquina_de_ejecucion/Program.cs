@@ -16,8 +16,10 @@ namespace Maquina_de_ejecucion
         public const int DATOS_MAXIMO = 10;
         /*Cantidad de registros enteros en la máquina*/
         public const int NUMERO_REGISTROS = 8;
+        /*Constante que representa el registro en donde se almacenará el contador de programa*/
+        public const int REG_EJEC = 7;
         /*Registro de la instrucción que se está ejecutando. Este valor se almacena en el último de los registros*/
-        public       int PC_REGISTRO = 0;
+        public static int PC_REGISTRO = 0;
 
         //DEFINICIÓN DE ARREGLOS
         /*Arreglo para almacenar datos*/
@@ -45,6 +47,15 @@ namespace Maquina_de_ejecucion
             Console.ForegroundColor = ConsoleColor.White;
             Console.Write(_instruccion);
         }//Imprimir_Error
+
+        /*Imprime de color azul la cadena que se envíe como parámetro*/
+        public static void Imprimir_Info(String _informacion)
+        {
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.Write("info > ");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write(_informacion);
+        }//Imprimir_Error
         #endregion
 
         #region COMANDOS
@@ -52,43 +63,101 @@ namespace Maquina_de_ejecucion
         /*Detiene la ejecución de la máquina. Los parámetros son ignorados*/
         public static void HALT(int r, int s, int t)
         {
-
+            Imprimir_Comando("HALT, finalizando ejecución\n");
+            return;
         }//HALT
 
-        /*reg[r] se lee un valor de la entrada y se almacena acá (s y t son ignorados)*/
+        /*Se lee un valor de entrada y se almacena en reg en la posición r*/
         public static void IN(int r, int s, int t)
         {
- 
+            bool valid = false;
+            int input = 0;
+            while (!valid)
+            {
+                Imprimir_Comando("IN: ");
+                try
+                {
+                    input = int.Parse(Console.ReadLine());
+                    valid = true;
+                }
+                catch(Exception e)
+                {
+                    Imprimir_Error("Valor de entrada no válido.");
+                }
+            }
+            try
+            {
+                reg[r] = input;
+            }
+            catch
+            {
+                Imprimir_Error("El valor (" + r + ") no es válido para el comando IN");
+            }
         }//IN
 
-        /*reg[r] se escribe en la salida el valor almacenado en esta dirección (s y t son ignorados)*/
+        /*Se escribe en la salida el valor de reg en la posición r*/
         public static void OUT(int r, int s, int t)
         {
-
+            try
+            {
+                Imprimir_Comando("OUT: [" + r + "] --> " + reg[r] + "\n");
+            }
+            catch
+            {
+                Imprimir_Error("El valor (" + r + ") no es válido para el comando OUT");
+            }
         }//OUT
 
         /*reg[r]=reg[s]+reg[t]*/
         public static void ADD(int r, int s, int t)
         {
-
+            try
+            {
+                reg[r] = reg[s] + reg[t];
+            }
+            catch
+            {
+                Imprimir_Error("No se pudo completar la operación ADD: Revisa los parámetros s(" + s + "), r(" + r + ")");
+            }
         }//ADD
 
         /*reg[r]=reg[s]-reg[t]*/
         public static void SUB(int r, int s, int t)
         {
-
+            try
+            {
+                reg[r] = reg[s] - reg[t];
+            }
+            catch
+            {
+                Imprimir_Error("No se pudo completar la operación SUB: Revisa los parámetros s(" + s + "), r(" + r + ")");
+            }
         }//SUB
 
         /*reg[r]=reg[s]*reg[t]*/
         public static void MUL(int r, int s, int t)
         {
-
+            try
+            {
+                reg[r] = reg[s] * reg[t];
+            }
+            catch
+            {
+                Imprimir_Error("No se pudo completar la operación MUL: Revisa los parámetros s(" + s + "), r(" + r + ")");
+            }
         }//MUL
 
         /*reg[r]=reg[s]/reg[t] (debe generar error si se divide por cero)*/
         public static void DIV(int r, int s, int t)
         {
-
+            try
+            {
+                reg[r] = reg[s] / reg[t];
+            }
+            catch
+            {
+                Imprimir_Error("No se pudo completar la operación DIV: Revisa los parámetros s(" + s + "), r(" + r + ")");
+            }
         }//DIV
         #endregion
         #region COMANDOS DE MEMORIA
@@ -249,10 +318,11 @@ namespace Maquina_de_ejecucion
         /* Método que ejecuta todos los comandos almacenados en el arreglo de instrucciones*/
         public static bool Ejecutar_Instrucciones()
         {
-            for (int i = 0; i < INSTRUCCIONES_MAXIMO; i++)
+            while (PC_REGISTRO < INSTRUCCIONES_MAXIMO)
             {
                 /*Separa cada una de las instrucciones de CMD,r,d,s,t --> [CMD][r][d][s][t]*/
-                string[] instrucciones_y_parametros = instrucciones_memoria[i].Split(',');
+                reg[REG_EJEC] = PC_REGISTRO;
+                string[] instrucciones_y_parametros = instrucciones_memoria[PC_REGISTRO].Split(',');
                 switch(instrucciones_y_parametros[0])
                 {
                     case "HALT":
@@ -307,9 +377,10 @@ namespace Maquina_de_ejecucion
                         JNE(int.Parse(instrucciones_y_parametros[1]), int.Parse(instrucciones_y_parametros[2]), int.Parse(instrucciones_y_parametros[3]));
                         break;
                     default:
-                        Imprimir_Error("Comando no conocido (" + instrucciones_y_parametros[0] + ") en la línea (" + i + ")");
+                        Imprimir_Error("Comando no conocido (" + instrucciones_y_parametros[0] + ") en la línea (" + PC_REGISTRO + ")");
                         return false;
                 }
+                PC_REGISTRO++;
             }
             return true;
         }
