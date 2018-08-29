@@ -16,10 +16,8 @@ namespace Maquina_de_ejecucion
         public const int DATOS_MAXIMO = 10;
         /*Cantidad de registros enteros en la máquina*/
         public const int NUMERO_REGISTROS = 8;
-        /*Constante que representa el registro en donde se almacenará el contador de programa*/
-        public const int REG_EJEC = 7;
         /*Registro de la instrucción que se está ejecutando. Este valor se almacena en el último de los registros*/
-        public static int PC_REGISTRO = 0;
+        public static int PC_REGISTRO = 7;
 
         //DEFINICIÓN DE ARREGLOS
         /*Arreglo para almacenar datos*/
@@ -164,61 +162,146 @@ namespace Maquina_de_ejecucion
         /*reg[r]=datos_Memoria[a]*/
         public static void LD(int r, int d, int s)
         {
-
+            try
+            {
+                int a = d + reg[s];
+                reg[r] = datos_memoria[a];
+            }
+            catch
+            {
+                Imprimir_Error("No se pudo completar la operación LD: Revisa los parámetros r(" + r + "), d(" + d + "), s(" + s + ")");
+            }
         }//LD
 
         /*reg[r]=a*/
         public static void LDA(int r, int d, int s)
         {
-
+            try
+            {
+                int a = d + reg[s];
+                reg[r] = a;
+            }
+            catch
+            {
+                Imprimir_Error("No se pudo completar la operación LDA: Revisa los parámetros r(" + r + "), d(" + d + "), s(" + s + ")");
+            }
         }//LDA
 
         /*reg[r]=d (s es ignorado)*/
         public static void LDC(int r, int d, int s)
         {
-
+            try
+            {
+                reg[r] = d;
+            }
+            catch
+            {
+                Imprimir_Error("No se pudo completar la operación LDC: Revisa los parámetros r(" + r + "), d(" + d + "), s(" + s + ")");
+            }
         }//LDC
 
         /*datos_Memoria [a]=reg[r]*/
         public static void ST(int r, int d, int s)
         {
-
+            try
+            {
+                int a = d + reg[s];
+                datos_memoria[a] = reg[r];
+            }
+            catch
+            {
+                Imprimir_Error("No se pudo completar la operación ST: Revisa los parámetros r(" + r + "), d(" + d + "), s(" + s + ")");
+            }
         }//ST
 
-        /*If reg[r]<0 reg[REG_EJEC]=a*/
+        /*If reg[r]<0 reg[PC_REGISTRO]=a*/
         public static void JLT(int r, int d, int s)
         {
-
+            try
+            {
+                int a = d + reg[s];
+                if (reg[r] < 0)
+                    reg[PC_REGISTRO] = a - 1; //-1 porque se le va a aumentar 1 automáticamente 
+            }
+            catch
+            {
+                Imprimir_Error("No se pudo completar la operación JLT: Revisa los parámetros r(" + r + "), d(" + d + "), s(" + s + ")");
+            }
         }//JLT
 
-        /*If reg[r]<=0 reg[REG_EJEC]=a*/
+        /*If reg[r]<=0 reg[PC_REGISTRO]=a*/
         public static void JLE(int r, int d, int s)
         {
-
+            try
+            {
+                int a = d + reg[s];
+                if (reg[r] <= 0)
+                    reg[PC_REGISTRO] = a - 1; //-1 porque se le va a aumentar 1 automáticamente 
+            }
+            catch
+            {
+                Imprimir_Error("No se pudo completar la operación JLE: Revisa los parámetros r(" + r + "), d(" + d + "), s(" + s + ")");
+            }
         }//JLE
 
-        /*If reg[r]>=0 reg[REG_EJEC]=a*/
+        /*If reg[r]>=0 reg[PC_REGISTRO]=a*/
         public static void JGE(int r, int d, int s)
         {
-
+            try
+            {
+                int a = d + reg[s];
+                if (reg[r] >= 0)
+                    reg[PC_REGISTRO] = a - 1; //-1 porque se le va a aumentar 1 automáticamente 
+            }
+            catch
+            {
+                Imprimir_Error("No se pudo completar la operación JGE: Revisa los parámetros r(" + r + "), d(" + d + "), s(" + s + ")");
+            }
         }//JGE
 
-        /*If reg[r]>0 reg[REG_EJEC]=a*/
+        /*If reg[r]>0 reg[PC_REGISTRO]=a*/
         public static void JGT(int r, int d, int s)
         {
-
+            try
+            {
+                int a = d + reg[s];
+                if (reg[r] > 0)
+                    reg[PC_REGISTRO] = a - 1; //-1 porque se le va a aumentar 1 automáticamente 
+            }
+            catch
+            {
+                Imprimir_Error("No se pudo completar la operación JGT: Revisa los parámetros r(" + r + "), d(" + d + "), s(" + s + ")");
+            }
         }//JGT
 
-        /*If reg[r]=0 reg[REG_EJEC]=a*/
+        /*If reg[r]=0 reg[PC_REGISTRO]=a*/
         public static void JEQ(int r, int d, int s)
         {
-
+            try
+            {
+                int a = d + reg[s];
+                if (reg[r] == 0)
+                    reg[PC_REGISTRO] = a - 1; //-1 porque se le va a aumentar 1 automáticamente 
+            }
+            catch
+            {
+                Imprimir_Error("No se pudo completar la operación JEQ: Revisa los parámetros r(" + r + "), d(" + d + "), s(" + s + ")");
+            }
         }//JEQ
 
-        /*If reg[r]!=0 reg[REG_EJEC]=a*/
+        /*If reg[r]!=0 reg[PC_REGISTRO]=a*/
         public static void JNE(int r, int d, int s)
         {
-
+            try
+            {
+                int a = d + reg[s];
+                if (reg[r] != 0)
+                    reg[PC_REGISTRO] = a - 1; //-1 porque se le va a aumentar 1 automáticamente 
+            }
+            catch
+            {
+                Imprimir_Error("No se pudo completar la operación JNE: Revisa los parámetros r(" + r + "), d(" + d + "), s(" + s + ")");
+            }
         }//JNE
         #endregion 
         #endregion
@@ -318,10 +401,9 @@ namespace Maquina_de_ejecucion
         /* Método que ejecuta todos los comandos almacenados en el arreglo de instrucciones*/
         public static bool Ejecutar_Instrucciones()
         {
-            while (PC_REGISTRO < INSTRUCCIONES_MAXIMO)
+            while (reg[PC_REGISTRO] < INSTRUCCIONES_MAXIMO)
             {
                 /*Separa cada una de las instrucciones de CMD,r,d,s,t --> [CMD][r][d][s][t]*/
-                reg[REG_EJEC] = PC_REGISTRO;
                 string[] instrucciones_y_parametros = instrucciones_memoria[PC_REGISTRO].Split(',');
                 switch(instrucciones_y_parametros[0])
                 {
@@ -380,7 +462,7 @@ namespace Maquina_de_ejecucion
                         Imprimir_Error("Comando no conocido (" + instrucciones_y_parametros[0] + ") en la línea (" + PC_REGISTRO + ")");
                         return false;
                 }
-                PC_REGISTRO++;
+                reg[PC_REGISTRO]++;
             }
             return true;
         }
